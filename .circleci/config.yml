@@ -42,6 +42,10 @@ jobs:
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text >> inventory
+      # Fail the job intentionally to simulate an error.
+      # Uncomment the line below if you want to fail the current step
+      - run: return 1
+      - destroy_environment
 
   configure_infrastructure: # Job 2 - Config and Deployment
     docker: # The primary container, where your job's commands will run
@@ -51,22 +55,30 @@ jobs:
       - add_ssh_keys:
           fingerprints: [f4:cc:19:75:f8:9c:0d:b5:70:b8:db:68:8c:72:e2:3f]
       - run:
-          name: Install Ansible
-          command: | # Install Ansible
+          name: Install Ansible # Install Ansible
+          command: |
             apk add --update ansible
       - run:
           name: Run Playbook and Configure server
-          command: | # Your command
+          command: |
             ansible-playbook -i inventory main-remote.yml
 
   smoke_test: # Job 3 - Smoke Testing
     docker:
       - image: alpine:latest
     steps:
+      - run: apk add --update curl # Update the Curl package
       - run:
-        name: Test job
-        # Fail the job intentionally to simulate an error
-        command: return 1
+        name: Smoke test job
+        command: |
+          URL="https://blog.udacity.com/"
+          # Test if website exists
+          if curl -s --head ${URL}
+          then
+            return 0
+          else
+            return 1
+          fi
       - destroy_environment
 
 # Sequential workflow
