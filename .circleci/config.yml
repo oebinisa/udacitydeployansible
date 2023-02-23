@@ -20,6 +20,16 @@ jobs:
               --template-file template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
               --region us-west-2
+      - run:
+          name: create_ansible_inventory_file_with_header
+          command: |
+            echo "[all]" > inventory
+      - run:
+          name: add_ec2_instances_ipv4_to_ansible_inventory_file
+          command: |
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text >> inventory
 
   configure_infrastructure: # Job 2 - Config and Deployment
     docker: # The primary container, where your job's commands will run
@@ -37,12 +47,12 @@ jobs:
       - run:
           name: Run Playbook and Configure server
           command: | # Your command
-            ansible-playbook -i inventory main-config.yml
+            ansible-playbook -i inventory main-remote.yml
 
 # Sequential workflow
 workflows:
   # Name the workflow
   myWorkflow:
     jobs:
-      #  - create_infrastructure
+      - create_infrastructure
       - configure_infrastructure
