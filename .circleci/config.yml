@@ -50,12 +50,10 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: [f4:cc:19:75:f8:9c:0d:b5:70:b8:db:68:8c:72:e2:3f]
-
       - run:
           name: Install Ansible
           command: | # Install Ansible
             apk add --update ansible
-
       - run:
           name: Run Playbook and Configure server
           command: | # Your command
@@ -66,16 +64,9 @@ jobs:
       - image: alpine:latest
     steps:
       - run:
-          name: Update apk for Curl
-          command: |
-            apk add \
-            --update curl
-
-      - run:
         name: Test job
         # Fail the job intentionally to simulate an error
         command: return 1
-
       - destroy_environment
 
 # Sequential workflow
