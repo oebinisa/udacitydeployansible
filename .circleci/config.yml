@@ -44,7 +44,7 @@ jobs:
             --output text >> inventory
       # Fail the job intentionally to simulate an error.
       # Uncomment the line below if you want to fail the current step
-      - run: return 1
+      # - run: return 1
       - destroy_environment
 
   configure_infrastructure: # Job 2 - Config and Deployment
