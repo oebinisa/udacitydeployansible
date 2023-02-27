@@ -180,6 +180,9 @@ jobs:
           command: |
             export OldBucketID=$(cat ~/textfile.txt)
             aws s3 rm "s3://${OldBucketID}" --recursive
+          #  aws cloudformation delete-stack --stack-name production-distro
+          #  aws cloudformation delete-stack --stack-name stack-create-bucket-${CIRCLE_WORKFLOW_ID:0:7}
+          #  aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
 
 # Sequential workflow
 workflows:
@@ -203,6 +206,6 @@ workflows:
           requires:
             - create_and_deploy_front_end
       - clean_up_old_front_end:
-        requires:
-          - get_last_deployment_id
-          - promote_to_production
+          requires:
+            - get_last_deployment_id
+            - promote_to_production
