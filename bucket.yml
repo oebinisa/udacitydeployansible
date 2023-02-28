@@ -2,7 +2,7 @@ Parameters:
 # New Bucket name
 MyBucketName:
   Description: Existing Bucket name
-  Type: mypipelinebucket01
+  Type: mypipelinebucketlive
 Resources:
 WebsiteBucket:
   Type: AWS::S3::Bucket
